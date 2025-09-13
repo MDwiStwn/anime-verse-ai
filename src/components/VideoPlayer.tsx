@@ -5,10 +5,11 @@ import { Play, Pause, Volume2, VolumeX, Maximize, Settings, SkipBack, SkipForwar
 interface VideoPlayerProps {
   episodeId: string;
   title: string;
+  videoUrl?: string;
   userSubscription?: "free" | "premium";
 }
 
-const VideoPlayer = ({ episodeId, title, userSubscription = "free" }: VideoPlayerProps) => {
+const VideoPlayer = ({ episodeId, title, videoUrl, userSubscription = "free" }: VideoPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -34,14 +35,27 @@ const VideoPlayer = ({ episodeId, title, userSubscription = "free" }: VideoPlaye
     <div className="relative bg-black rounded-lg overflow-hidden shadow-card group">
       {/* Video Container */}
       <div className="relative aspect-video bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-        {/* Placeholder for actual video */}
-        <div className="text-white text-center">
-          <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
-            {isPlaying ? <Pause className="w-12 h-12" /> : <Play className="w-12 h-12 ml-1" />}
+        {/* Video Element or Placeholder */}
+        {videoUrl ? (
+          <video
+            className="w-full h-full object-cover"
+            controls={false}
+            poster=""
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <div className="text-white text-center">
+            <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4">
+              {isPlaying ? <Pause className="w-12 h-12" /> : <Play className="w-12 h-12 ml-1" />}
+            </div>
+            <p className="text-lg font-medium">{title}</p>
+            <p className="text-sm text-gray-400 mt-2">Episode {episodeId}</p>
+            <p className="text-xs text-gray-500 mt-2">Video URL not available</p>
           </div>
-          <p className="text-lg font-medium">{title}</p>
-          <p className="text-sm text-gray-400 mt-2">Episode {episodeId}</p>
-        </div>
+        )}
 
         {/* Quality Restriction Overlay for Free Users */}
         {userSubscription === "free" && selectedQuality !== "480p" && (

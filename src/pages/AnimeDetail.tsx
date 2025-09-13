@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Play, Plus, Star, Calendar, Clock } from "lucide-react";
 import Navigation from "@/components/Navigation";
@@ -25,6 +25,7 @@ const animeDetails = {
 
 const AnimeDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,7 +69,10 @@ const AnimeDetail = () => {
               </div>
               
               <div className="flex space-x-4">
-                <Button className="bg-gradient-primary hover:opacity-90 text-white font-semibold px-8 py-3 shadow-glow">
+                <Button 
+                  onClick={() => navigate('/watch/1')}
+                  className="bg-gradient-primary hover:opacity-90 text-white font-semibold px-8 py-3 shadow-glow"
+                >
                   <Play className="w-5 h-5 mr-2" />
                   Watch Episode 1
                 </Button>
@@ -96,6 +100,7 @@ const AnimeDetail = () => {
               {animeDetails.episodes.map((episode) => (
                 <div 
                   key={episode.id}
+                  onClick={() => navigate(`/watch/${episode.id}`)}
                   className="bg-card rounded-lg p-6 hover:bg-card/80 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center justify-between">

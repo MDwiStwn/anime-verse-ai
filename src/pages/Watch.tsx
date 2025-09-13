@@ -1,24 +1,62 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Navigation from "@/components/Navigation";
 import VideoPlayer from "@/components/VideoPlayer";
 import AnimeCard from "@/components/AnimeCard";
+import { supabase } from "@/integrations/supabase/client";
 import anime1 from "@/assets/anime1.jpg";
 import anime2 from "@/assets/anime2.jpg";
 import anime3 from "@/assets/anime3.jpg";
 
 const Watch = () => {
   const { episodeId } = useParams();
-  
-  // Sample episode data - this will be replaced with Supabase data
-  const episode = {
-    id: episodeId || "1",
-    title: "Awakening",
-    anime_title: "Stellar Knights",
-    episode_number: 1,
-    description: "Akira discovers his connection to the Stellar Knights when his colony comes under attack. His first battle will determine the fate of thousands.",
-    next_episode: "2",
-    prev_episode: null
-  };
+  const [episode, setEpisode] = useState<any>(null);
+  const [anime, setAnime] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchEpisodeData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch episode data
+        const { data: episodeData, error: episodeError } = await supabase
+          .from('episodes')
+          .select('*')
+          .eq('id', episodeId)
+          .single();
+
+        if (episodeError) {
+          throw new Error('Episode not found');
+        }
+
+        setEpisode(episodeData);
+
+        // Fetch anime data
+        const { data: animeData, error: animeError } = await supabase
+          .from('animes')
+          .select('*')
+          .eq('id', episodeData.anime_id)
+          .single();
+
+        if (animeError) {
+          throw new Error('Anime not found');
+        }
+
+        setAnime(animeData);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (episodeId) {
+      fetchEpisodeData();
+    }
+  }, [episodeId]);
 
   const relatedAnimes = [
     {
@@ -44,6 +82,34 @@ const Watch = () => {
   // Sample user subscription - this will come from Supabase auth
   const userSubscription = "free"; // or "premium"
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg text-muted-foreground">Loading episode...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !episode || !anime) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg text-destructive">
+              {error || 'Episode not found'}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -54,7 +120,8 @@ const Watch = () => {
           <div className="lg:col-span-3">
             <VideoPlayer 
               episodeId={episode.id}
-              title={`${episode.anime_title} - ${episode.title}`}
+              title={`${anime.title || anime.english_title} - ${episode.title}`}
+              videoUrl={episode.video_url}
               userSubscription={userSubscription as "free" | "premium"}
             />
             
@@ -63,13 +130,13 @@ const Watch = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-foreground mb-2">
-                    {episode.anime_title}
+                    {anime.title || anime.english_title}
                   </h1>
                   <h2 className="text-xl text-muted-foreground mb-2">
                     Episode {episode.episode_number}: {episode.title}
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    {episode.description}
+                    {episode.synopsis || "No description available."}
                   </p>
                 </div>
               </div>
