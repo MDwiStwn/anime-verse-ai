@@ -14,6 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
+      animes: {
+        Row: {
+          banner_image_url: string | null
+          cover_image_url: string | null
+          created_at: string
+          english_title: string | null
+          episode_count: number | null
+          genres: string[] | null
+          id: string
+          rating: number | null
+          release_year: number | null
+          romaji_title: string | null
+          status: string | null
+          studio: string | null
+          synopsis: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_image_url?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          english_title?: string | null
+          episode_count?: number | null
+          genres?: string[] | null
+          id?: string
+          rating?: number | null
+          release_year?: number | null
+          romaji_title?: string | null
+          status?: string | null
+          studio?: string | null
+          synopsis?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          banner_image_url?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          english_title?: string | null
+          episode_count?: number | null
+          genres?: string[] | null
+          id?: string
+          rating?: number | null
+          release_year?: number | null
+          romaji_title?: string | null
+          status?: string | null
+          studio?: string | null
+          synopsis?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      episodes: {
+        Row: {
+          air_date: string | null
+          anime_id: string
+          created_at: string
+          duration: number | null
+          episode_number: number
+          id: string
+          synopsis: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          air_date?: string | null
+          anime_id: string
+          created_at?: string
+          duration?: number | null
+          episode_number: number
+          id?: string
+          synopsis?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          air_date?: string | null
+          anime_id?: string
+          created_at?: string
+          duration?: number | null
+          episode_number?: number
+          id?: string
+          synopsis?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episodes_anime_id_fkey"
+            columns: ["anime_id"]
+            isOneToOne: false
+            referencedRelation: "animes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           auth_user_id: string
