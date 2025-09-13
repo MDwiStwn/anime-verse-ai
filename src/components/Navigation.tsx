@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Search, User, Crown } from "lucide-react";
+import { Search, User, Crown, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navigation = () => {
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+  };
   return (
     <nav className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -44,11 +50,24 @@ const Navigation = () => {
             </Button>
           </Link>
           
-          <Link to="/profile">
-            <Button variant="ghost" size="sm">
-              <User className="w-4 h-4" />
-            </Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/profile">
+                <Button variant="ghost" size="sm">
+                  <User className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </>
+          ) : (
+            <Link to="/login">
+              <Button variant="outline" size="sm" className="border-anime-primary text-anime-primary hover:bg-anime-primary hover:text-white">
+                Login
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

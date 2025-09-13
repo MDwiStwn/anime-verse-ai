@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,15 +17,48 @@ const Signup = () => {
     password: "",
     confirmPassword: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be connected to Supabase authentication
+    
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Passwords do not match!",
+      });
       return;
     }
-    console.log("Signup attempt:", formData);
+    
+    if (formData.username.length < 3) {
+      toast({
+        variant: "destructive",
+        title: "Error", 
+        description: "Username must be at least 3 characters long.",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    const { error } = await signUp(formData.email, formData.password, formData.username);
+    
+    if (!error) {
+      navigate('/login');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -115,8 +150,12 @@ const Signup = () => {
                 </div>
               </div>
               
-              <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold shadow-glow">
-                Create Account
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold shadow-glow"
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
             

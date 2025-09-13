@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,11 +14,28 @@ const Login = () => {
     email: "",
     password: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be connected to Supabase authentication
-    console.log("Login attempt:", formData);
+    setIsLoading(true);
+    
+    const { error } = await signIn(formData.email, formData.password);
+    
+    if (!error) {
+      navigate('/');
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -83,8 +101,12 @@ const Login = () => {
                 </Link>
               </div>
               
-              <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold shadow-glow">
-                Sign In
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold shadow-glow"
+              >
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
             
