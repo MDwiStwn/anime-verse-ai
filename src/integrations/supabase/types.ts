@@ -73,6 +73,7 @@ export type Database = {
           air_date: string | null
           anime_id: string
           created_at: string
+          download_url: string | null
           duration: number | null
           episode_number: number
           id: string
@@ -86,6 +87,7 @@ export type Database = {
           air_date?: string | null
           anime_id: string
           created_at?: string
+          download_url?: string | null
           duration?: number | null
           episode_number: number
           id?: string
@@ -99,6 +101,7 @@ export type Database = {
           air_date?: string | null
           anime_id?: string
           created_at?: string
+          download_url?: string | null
           duration?: number | null
           episode_number?: number
           id?: string
@@ -124,6 +127,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          role: string
           two_factor_enabled: boolean
           two_factor_secret: string | null
           updated_at: string
@@ -134,6 +138,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          role?: string
           two_factor_enabled?: boolean
           two_factor_secret?: string | null
           updated_at?: string
@@ -144,6 +149,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          role?: string
           two_factor_enabled?: boolean
           two_factor_secret?: string | null
           updated_at?: string
@@ -156,7 +162,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_animes: {
+        Args: { search_query: string }
+        Returns: {
+          banner_image_url: string | null
+          cover_image_url: string | null
+          created_at: string
+          english_title: string | null
+          episode_count: number | null
+          genres: string[] | null
+          id: string
+          rating: number | null
+          release_year: number | null
+          romaji_title: string | null
+          status: string | null
+          studio: string | null
+          synopsis: string | null
+          title: string
+          updated_at: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
