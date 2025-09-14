@@ -1,13 +1,25 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, User, Crown, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Navigation = () => {
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = async () => {
     await signOut();
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search-results?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
   };
   return (
     <nav className="bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
@@ -34,14 +46,16 @@ const Navigation = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="relative hidden sm:block">
+          <form onSubmit={handleSearch} className="relative hidden sm:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search anime..."
-              className="pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-anime-primary text-foreground"
+              className="pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-anime-primary text-foreground w-64"
             />
-          </div>
+          </form>
           
           <Link to="/subscribe">
             <Button variant="outline" size="sm" className="border-anime-primary text-anime-primary hover:bg-anime-primary hover:text-white">

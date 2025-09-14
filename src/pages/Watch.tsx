@@ -160,6 +160,31 @@ const Watch = () => {
               </div>
             </div>
 
+            {/* Download Section */}
+            {episode.download_url && (
+              <div className="mt-6 bg-card rounded-lg p-6 shadow-card">
+                <h3 className="text-xl font-bold text-foreground mb-4">Download</h3>
+                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-foreground">
+                      Download Episode {episode.episode_number}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      High quality video file for offline viewing
+                    </p>
+                  </div>
+                  <a
+                    href={episode.download_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-primary text-white px-6 py-2 rounded-lg hover:opacity-90 font-medium shadow-glow transition-opacity"
+                  >
+                    Download Video
+                  </a>
+                </div>
+              </div>
+            )}
+
             {/* Comments Section Placeholder */}
             <div className="mt-6 bg-card rounded-lg p-6 shadow-card">
               <h3 className="text-xl font-bold text-foreground mb-4">Comments</h3>

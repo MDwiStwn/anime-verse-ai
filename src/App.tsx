@@ -11,6 +11,10 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
 import Watch from "./pages/Watch";
+import SearchResults from "./pages/SearchResults";
+import Admin from "./pages/Admin";
+import AdminAnimes from "./pages/AdminAnimes";
+import AdminAnimeForm from "./pages/AdminAnimeForm";
 import ChatBot from "./components/ChatBot";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +31,11 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/anime/:id" element={<AnimeDetail />} />
             <Route path="/watch/:episodeId" element={<Watch />} />
+            <Route path="/search-results" element={<SearchResults />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/animes" element={<AdminAnimes />} />
+            <Route path="/admin/anime/new" element={<AdminAnimeForm />} />
+            <Route path="/admin/anime/edit/:id" element={<AdminAnimeForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
